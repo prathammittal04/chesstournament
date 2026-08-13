@@ -39,5 +39,27 @@
     <p class="text-secondary fst-italic mt-2">
         <small>* Click on any team name in the leaderboard to view their complete match history.</small>
     </p>
+    <hr>
+
+    <h2 class="mb-4">Teams & Players</h2>
+
+    <div class="row">
+        {% for team in teams %}
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card p-3 h-100 bg-dark border-secondary">
+                <h4 class="text-light">{{ team.name }}</h4>
+                <hr class="text-secondary mt-1 mb-2">
+                <ul class="list-unstyled mb-0">
+                {% for player in team.players|sort(attribute='board_number') %}
+                    <li class="mb-1 text-secondary">
+                        <span class="text-info fw-bold">Board {{ player.board_number }}</span> : 
+                        <span class="text-light">{{ player.name }}</span>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
