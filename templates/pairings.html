@@ -1,0 +1,87 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="page-title mb-1">{{ tournament.name }}</h1>
+        <p class="text-secondary mb-0">Round {{ round_number }} pairings</p>
+    </div>
+    <a href="{{ url_for('tournament.dashboard', tournament_id=tournament_id) }}" class="btn btn-outline-light">
+        Leaderboard
+    </a>
+</div>
+
+{% for match in matches %}
+<div class="card p-4 mb-4">
+    <h3 class="mb-4">Table {{ match.table_number }}</h3>
+    <div class="row">
+        <div class="col-md-5">
+            <h4>{{ match.team1.name }}</h4>
+            <hr>
+            {% for player in match.team1.players|sort(attribute='board_number') %}
+            <div class="player-row">
+                <span>Board {{ player.board_number }}</span>
+                <span>{{ player.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-2">
+            <div class="vs">VS</div>
+        </div>
+        <div class="col-md-5">
+            <h4>{{ match.team2.name }}</h4>
+            <hr>
+            {% for player in match.team2.players|sort(attribute='board_number') %}
+            <div class="player-row">
+                <span>Board {{ player.board_number }}</span>
+                <span>{{ player.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        {% if match.completed %}
+            <div class="result-badge mb-3">
+                {{ match.team1.name }} {{ '%.1f'|format(match.team1_score) }} -
+                {{ '%.1f'|format(match.team2_score) }} {{ match.team2.name }}
+            </div>
+        {% endif %}
+        
+        <!-- Dynamic Button: View (past round), Edit (current round, complete), Enter (current round, incomplete) -->
+        <a class="btn {% if round_number < tournament.current_round %}btn-info{% elif match.completed %}btn-warning{% else %}btn-primary{% endif %} btn-lg"
+           href="{{ url_for('tournament.enter_result', match_id=match.id) }}">
+            {% if round_number < tournament.current_round %}
+                View Board Results
+            {% elif match.completed %}
+                Edit Result
+            {% else %}
+                Enter Result
+            {% endif %}
+        </a>
+    </div>
+</div>
+{% endfor %}
+
+{% if all_completed %}
+<div class="card p-4 mb-4 text-center">
+    <h3 class="mb-3">Round {{ round_number }} is complete</h3>
+    
+    <!-- Only show the "Start Next Round" or "Final Leaderboard" button if this is the active round -->
+    {% if round_number == tournament.current_round %}
+        {% if round_number < tournament.total_rounds %}
+            <a href="{{ url_for('tournament.start_round', tournament_id=tournament_id) }}" class="btn btn-success btn-lg">
+                Start Round {{ round_number + 1 }}
+            </a>
+        {% else %}
+            <a href="{{ url_for('tournament.dashboard', tournament_id=tournament_id) }}" class="btn btn-primary btn-lg">
+                View Final Leaderboard
+            </a>
+        {% endif %}
+    {% else %}
+        <!-- If it's a past round, just offer a back button -->
+        <a href="{{ url_for('tournament.dashboard', tournament_id=tournament_id) }}" class="btn btn-outline-light btn-lg">
+            Back to Dashboard
+        </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

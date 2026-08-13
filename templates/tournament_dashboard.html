@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="page-title mb-4">
+
+{{ tournament.name }}
+
+</h1>
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        <div class="card p-4 mb-4">
+
+            <h5>Status</h5>
+
+            <h3>{{ tournament.status }}</h3>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card p-4 mb-4">
+
+            <h5>Current Round</h5>
+
+            <h3>
+
+                {{ tournament.current_round }}
+
+                /
+
+                {{ tournament.total_rounds }}
+
+            </h3>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card p-4 mb-4">
+
+            <h5>Total Teams</h5>
+
+            <h3>{{ tournament.total_teams }}</h3>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="d-grid gap-3">
+
+    <a
+        href="{{ url_for('tournament.start_round',
+        tournament_id=tournament.id) }}"
+        class="btn btn-success btn-lg">
+
+        {% if tournament.current_round == 0 %}
+            ▶ Start Swiss Tournament
+        {% else %}
+            ▶ Start Round {{ tournament.current_round + 1 }}
+        {% endif %}
+
+    </a>
+
+    <a
+        href="{{ url_for('tournament.dashboard',
+        tournament_id=tournament.id) }}"
+        class="btn btn-primary">
+
+        🏆 Dashboard & Leaderboard
+
+    </a>
+
+    <a
+        href="{{ url_for('tournament.edit_teams',
+        tournament_id=tournament.id) }}"
+        class="btn btn-secondary">
+
+        👥 View Teams
+
+    </a>
+
+</div>
+
+{% endblock %}

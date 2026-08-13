@@ -1,0 +1,128 @@
+body{
+
+    background:#111827;
+
+    color:#f8fafc;
+
+    font-family:Segoe UI,sans-serif;
+
+}
+
+.navbar{
+
+    background:#111827 !important;
+
+}
+
+.page-title{
+
+    font-size:36px;
+
+    font-weight:bold;
+
+}
+
+.card{
+
+    background:#1e293b;
+
+    border:none;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 20px rgba(0,0,0,.25);
+
+    color:white;
+
+}
+
+.card:hover{
+
+    transform:translateY(-3px);
+
+    transition:.3s;
+
+}
+
+.btn-primary{
+
+    background:#2563eb;
+
+    border:none;
+
+}
+
+.btn-success{
+
+    background:#16a34a;
+
+    border:none;
+
+}
+
+.form-control,
+.form-select{
+
+    background:#334155;
+
+    color:white;
+
+    border:1px solid #475569;
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+    background:#475569;
+
+    color:white;
+
+}
+
+.form-select option{
+
+    background:#334155;
+
+    color:white;
+
+}
+
+.table{
+
+    color:white;
+
+}
+
+.player-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    padding:10px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.vs{
+
+    font-size:42px;
+
+    font-weight:bold;
+
+    text-align:center;
+
+    margin-top:100px;
+
+    color:#60a5fa;
+
+}
+
+.form-control:disabled, .form-select:disabled {
+    background-color: #1e293b; /* Matches the card background */
+    color: #94a3b8;            /* Muted gray text to indicate it's disabled */
+    border-color: #334155;
+    opacity: 1;                /* Prevents browsers from fading it out too much */
+}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Team Details</h2>
+
+<form method="POST">
+
+{% for team in teams %}
+
+{% set team_index = loop.index %}
+
+<div class="card p-4 mb-4">
+
+    <h4>Team {{ team_index }}</h4>
+
+    <!-- Hidden Team ID -->
+    <input
+        type="hidden"
+        name="team_id_{{ team_index }}"
+        value="{{ team.id }}">
+
+    <!-- Team Name -->
+    <input
+        type="text"
+        class="form-control mb-3"
+        name="team_name_{{ team_index }}"
+        value="{{ team.name }}"
+        placeholder="Team Name"
+        required>
+
+    {% for board in range(1, tournament.team_size + 1) %}
+
+    {% set player = team.players | selectattr("board_number", "equalto", board) | first %}
+    <input
+        type="text"
+        class="form-control mb-2"
+        name="player_{{ team_index }}_{{ board }}"
+        placeholder="Player {{ board }}"
+        value="{{ player.name if player else '' }}"
+        required>
+
+    {% endfor %}
+
+</div>
+
+{% endfor %}
+
+<button
+type="submit"
+class="btn btn-success">
+
+Save Teams
+
+</button>
+
+</form>
+
+{% endblock %}

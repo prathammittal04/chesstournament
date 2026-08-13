@@ -1,0 +1,91 @@
+{% extends "base.html" %} 
+
+{% block content %}
+<div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="mb-0">{{ team.name }} History</h1>
+            <p class="text-secondary mt-1">{{ tournament.name }}</p>
+        </div>
+        <a href="{% if session.get('user_id') %}{{ url_for('tournament.dashboard', tournament_id=tournament.id) }}{% else %}{{ url_for('home.viewer_leaderboard', tournament_id=tournament.id) }}{% endif %}" class="btn btn-outline-light">
+            Back to Leaderboard
+        </a>
+    </div>
+
+    {% if history %}
+        <div class="card p-0 overflow-hidden mb-4 shadow border-0">
+            <table class="table table-dark table-hover mb-0 align-middle text-center">
+                <thead class="table-active">
+                    <tr>
+                        <th class="py-3">Round</th>
+                        <th class="text-end py-3">Team</th>
+                        <th class="py-3">Score</th>
+                        <th class="text-start py-3">Opponent</th>
+                        <th class="py-3">Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in history %}
+                    <!-- Main Row (Clickable) -->
+                    <tr data-bs-toggle="collapse" data-bs-target="#boards-{{ loop.index }}" style="cursor: pointer;">
+                        <td class="fw-bold fs-5 text-secondary">R{{ match.round_number }}</td>
+                        <td class="text-end fw-bold fs-5 text-light">{{ team.name }}</td>
+                        <td>
+                            <span class="badge bg-dark border border-secondary fs-6 py-2 px-3">
+                                <span class="text-info">{{ '%.1f'|format(match.team_score) }}</span>
+                                <span class="text-secondary mx-2">-</span>
+                                <span class="text-warning">{{ '%.1f'|format(match.opponent_score) }}</span>
+                            </span>
+                            <div class="mt-2"><small class="text-secondary">Click to view boards ⌄</small></div>
+                        </td>
+                        <td class="text-start fw-bold fs-5 text-light">{{ match.opponent.name }}</td>
+                        <td>
+                            {% if match.team_score > match.opponent_score %}
+                                <span class="badge bg-success fs-6">Won</span>
+                            {% elif match.team_score < match.opponent_score %}
+                                <span class="badge bg-danger fs-6">Lost</span>
+                            {% else %}
+                                <span class="badge bg-secondary fs-6">Draw</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    
+                    <!-- Hidden Board Details Row -->
+                    <tr>
+                        <td colspan="5" class="p-0 border-0">
+                            <div id="boards-{{ loop.index }}" class="collapse bg-dark border-bottom border-secondary text-start p-4">
+                                <h6 class="text-secondary mb-3">Individual Board Results:</h6>
+                                <div class="row">
+                                    {% for board in match.board_details %}
+                                    <div class="col-md-6 mb-2">
+                                        <div class="p-2 border border-secondary rounded" style="background-color: #1e293b;">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>
+                                                    <strong class="text-light">Board {{ board.board_number }}:</strong> 
+                                                    <span class="text-info fw-bold">{{ board.team_player }}</span> 
+                                                    <span class="{{ board.color }} mx-1">{{ board.status }}</span> 
+                                                    <span class="text-warning fw-bold">{{ board.opponent_player }}</span>
+                                                </span>
+                                                <span class="badge bg-secondary">
+                                                    {{ '%.1f'|format(board.team_score) }} - {{ '%.1f'|format(board.opponent_score) }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="card p-5 text-center bg-dark border-0 shadow">
+            <h4 class="text-light">No completed matches yet.</h4>
+            <p class="text-secondary mb-0">Data will appear here once round 1 is finished.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

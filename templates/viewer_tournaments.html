@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="page-title mb-4">Select a Tournament</h1>
+
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Live Leaderboards</h3>
+        <a href="{{ url_for('home.index') }}" class="btn btn-outline-secondary">Back to Portal</a>
+    </div>
+
+    {% if tournaments %}
+        {% for tournament in tournaments %}
+        <div class="card p-3 mb-3">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4>{{ tournament.name }}</h4>
+                    <p class="mb-1">Status : {{ tournament.status }}</p>
+                    <p class="mb-0">Round {{ tournament.current_round }} / {{ tournament.total_rounds }}</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('home.viewer_leaderboard', tournament_id=tournament.id) }}" class="btn btn-info">
+                        View Leaderboard
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <h4>No tournaments running right now.</h4>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

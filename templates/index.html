@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="display-3 fw-bold">Chess Tournament Manager</h1>
+    <p class="lead mt-3">Select your portal to continue</p>
+    
+    <div class="mt-5 d-flex justify-content-center gap-4">
+        <a href="{{ url_for('home.viewer_tournaments') }}" class="btn btn-info btn-lg px-5">Viewers</a>
+        <a href="{{ url_for('home.login') }}" class="btn btn-warning btn-lg px-5">Admin</a>
+        <a href="{{ url_for('static', filename='Chessrulebook.pdf') }}"
+   target="_blank"
+   class="btn btn-secondary btn-lg px-5">
+    Rule Book
+</a>
+    </div>
+</div>
+{% endblock %}

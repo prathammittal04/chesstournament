@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <h1 class="mb-0">Tournament Dashboard</h1>
+        <a href="{{ url_for('home.tournaments_list') }}" class="btn btn-outline-light">All Tournaments</a>
+    </div>
+
+    <div class="card p-4 mb-4">
+
+        <h3>{{ tournament.name }}</h3>
+
+        <hr>
+
+        <p><strong>Status:</strong> {{ tournament.status }}</p>
+
+        <p><strong>Current Round:</strong>
+            {{ tournament.current_round }} / {{ tournament.total_rounds }}
+        </p>
+
+        <p><strong>Total Teams:</strong>
+            {{ tournament.total_teams }}
+        </p>
+
+        <p><strong>Total Players:</strong>
+            {{ tournament.total_members }}
+        </p>
+
+    </div>
+
+    <div class="d-flex flex-wrap justify-content-end gap-2 mb-4">
+        {% if tournament.current_round > 0 %}
+            {% for r in range(1, tournament.current_round + 1) %}
+                <a href="{{ url_for('tournament.round_pairings', tournament_id=tournament.id, round_number=r) }}"
+                   class="btn {% if r == tournament.current_round %}btn-primary{% else %}btn-outline-primary{% endif %} btn-lg">
+                    View Round {{ r }}
+                </a>
+            {% endfor %}
+        {% endif %}
+
+        {% if tournament.status != 'Completed' %}
+            <a href="{{ url_for('tournament.start_round', tournament_id=tournament.id) }}"
+               class="btn btn-success btn-lg">
+                {% if tournament.current_round == 0 %}
+                    Start Swiss Tournament
+                {% else %}
+                    Start Round {{ tournament.current_round + 1 }}
+                {% endif %}
+            </a>
+        {% endif %}
+
+        <a href="{{ url_for('tournament.edit_teams', tournament_id=tournament.id) }}" class="btn btn-warning btn-lg">
+            Edit Teams
+        </a>
+    </div>
+
+    <h2 class="mb-3">Leaderboard</h2>
+
+    <table class="table table-dark table-striped">
+
+        <thead>
+
+        <tr>
+
+            <th>Rank</th>
+            <th>Team</th>
+            <th>Match Points</th>
+            <th>Board Points</th>
+            <th>Buchholz</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for team in teams %}
+
+        <tr>
+
+            <td>{{ loop.index }}</td>
+
+            <td>
+                <a href="{{ url_for('tournament.team_history', team_id=team.id) }}" class="text-info text-decoration-none fw-bold">
+                    {{ team.name }}
+                </a>
+            </td>
+
+            <td>{{ team.match_points }}</td>
+
+            <td>{{ '%.1f'|format(team.board_points) }}</td>
+
+            <td>{{ '%.1f'|format(team.buchholz) }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+    <p class="text-secondary fst-italic mt-2">
+        <small>* Click on any team name in the leaderboard to view their complete match history.</small>
+    </p>
+
+    <hr>
+
+    <h2 class="mb-4">Teams & Players</h2>
+
+    {% for team in teams %}
+
+    <div class="card p-3 mb-3">
+
+        <h4>{{ team.name }}</h4>
+
+        <ul>
+
+        {% for player in team.players %}
+
+            <li>
+                Board {{ player.board_number }} :
+                {{ player.name }}
+            </li>
+
+        {% endfor %}
+
+        </ul>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

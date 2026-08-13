@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-7">
+
+        <div class="card shadow-lg p-4 bg-dark text-white">
+
+            <h2 class="text-center mb-4">
+                Tournament Setup
+            </h2>
+
+            <form method="POST">
+
+                <div class="mb-3">
+                    <div class="mb-3">
+
+    <label class="form-label">
+
+        Tournament Name
+
+    </label>
+
+    <input
+        type="text"
+        name="tournament_name"
+        class="form-control"
+        placeholder="Office Chess League"
+        required>
+
+</div>
+                    <label>Total Members</label>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        id="members"
+                        name="members"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label>Team Size</label>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        id="teamSize"
+                        name="team_size"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label>Swiss Rounds</label>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        name="rounds"
+                        required>
+                </div>
+
+                <div class="mb-4">
+                    <label>Number of Teams</label>
+
+                    <input
+                        type="text"
+                        id="teams"
+                        class="form-control"
+                        readonly>
+                </div>
+
+                <button class="btn btn-warning w-100">
+                    Generate Teams
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="page-title mb-1">{{ match.team1.name }} vs {{ match.team2.name }}</h1>
+        <p class="text-secondary mb-0">Round {{ round.round_number }}   Table {{ match.table_number }}</p>
+    </div>
+    <a href="{{ url_for('tournament.round_pairings', tournament_id=match.team1.tournament_id, round_number=round.round_number) }}"
+       class="btn btn-outline-light">
+        Back to Round
+    </a>
+</div>
+
+<form method="POST">
+{% for board_number, p1, p2, existing_score in board_rows %}
+<div class="card p-4 mb-3">
+    <div class="row align-items-center">
+        <div class="col-md-4">
+            <h5>{{ p1.name }}</h5>
+            <small>Board {{ board_number }}</small>
+        </div>
+        <div class="col-md-4">
+            <select
+                class="form-select"
+                name="board{{ loop.index0 }}"
+                {% if round.round_number < tournament.current_round %}disabled{% endif %}>
+                <option value="1" {% if existing_score == 1 %}selected{% endif %}>{{ match.team1.name }} wins board</option>
+                <option value="0.5" {% if existing_score == 0.5 %}selected{% endif %}>Draw</option>
+                <option value="0" {% if existing_score == 0 %}selected{% endif %}>{{ match.team2.name }} wins board</option>
+            </select>
+        </div>
+        <div class="col-md-4 text-end">
+            <h5>{{ p2.name }}</h5>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Only show the save button if this is the currently active round -->
+{% if round.round_number == tournament.current_round %}
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-success btn-lg">
+        Save Result & Return to Round
+    </button>
+</div>
+{% endif %}
+</form>
+{% endblock %}
