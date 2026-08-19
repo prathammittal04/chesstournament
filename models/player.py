@@ -14,3 +14,4 @@ class Player(db.Model):
     name = db.Column(db.String(100), nullable=False)
 
     board_number = db.Column(db.Integer)
+    score = db.Column(db.Float, default=0.0)

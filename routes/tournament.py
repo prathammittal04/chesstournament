@@ -17,6 +17,16 @@ def ordered_players(team):
     return sorted(team.players, key=lambda player: player.board_number or 0)
 
 
+def auto_adjust_boards(tournament_id):
+    teams = Team.query.filter_by(tournament_id=tournament_id).all()
+    for team in teams:
+        # Sort by highest score first. Tie-breaker is the current board number.
+        sorted_players = sorted(team.players, key=lambda p: (-p.score, p.board_number))
+        for index, player in enumerate(sorted_players, start=1):
+            player.board_number = index
+    db.session.commit()
+
+
 def match_points_from_scores(team1_score, team2_score):
     if team1_score > team2_score:
         return 2, 0
@@ -230,12 +240,14 @@ def dashboard(tournament_id):
     db.session.commit()
     teams = leaderboard_query(tournament_id).all()
     active_round = get_active_round(tournament_data)
+    top_players = Player.query.join(Team).filter(Team.tournament_id == tournament_id).order_by(Player.score.desc()).all()
 
     return render_template(
         "dashboard.html",
         tournament=tournament_data,
         teams=teams,
         active_round=active_round,
+        top_players=top_players, 
     )
 
 
@@ -282,6 +294,8 @@ def start_round(tournament_id):
     if next_round_number == 1:
         teams = Team.query.filter_by(tournament_id=tournament_id).order_by(Team.seed).all()
     else:
+        if next_round_number > 2:
+            auto_adjust_boards(tournament_id)
         recalculate_buchholz(tournament_id)
         teams = leaderboard_query(tournament_id).all()
 
@@ -356,6 +370,11 @@ def enter_result(match_id):
             match.team2.board_points -= match.team2_score
             match.team1.match_points -= old_mp1
             match.team2.match_points -= old_mp2
+            for br in match.board_results:
+                p1_ref = next((p for p in match.team1.players if p.name == br.player1_name), None)
+                p2_ref = next((p for p in match.team2.players if p.name == br.player2_name), None)
+                if p1_ref: p1_ref.score -= br.player1_score
+                if p2_ref: p2_ref.score -= br.player2_score
 
         BoardResult.query.filter_by(match_id=match.id).delete()
         board_scores = []
@@ -363,6 +382,9 @@ def enter_result(match_id):
         for i, (p1, p2) in enumerate(zip(team1_players, team2_players)):
             score = float(request.form[f"board{i}"])
             board_scores.append(score)
+            p1.score += score
+            p2.score += (1 - score)
+            
             db.session.add(
                 BoardResult(
                     match_id=match.id,

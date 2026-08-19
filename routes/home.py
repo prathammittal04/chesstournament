@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from models.player import Player
 from models.tournament import Tournament
 from models.team import Team
 from models.user import User
@@ -59,5 +60,5 @@ def viewer_leaderboard(tournament_id):
         Team.board_points.desc(),
         Team.seed.asc()
     ).all()
-    
-    return render_template("viewer_leaderboard.html", tournament=tournament, teams=teams)
+    top_players = Player.query.join(Team).filter(Team.tournament_id == tournament_id).order_by(Player.score.desc()).all()
+    return render_template("viewer_leaderboard.html", tournament=tournament, teams=teams, top_players=top_players)

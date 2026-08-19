@@ -39,5 +39,33 @@
     <p class="text-secondary fst-italic mt-2">
         <small>* Click on any team name in the leaderboard to view their complete match history.</small>
     </p>
+
+    <hr class="my-5">
+    
+    <!-- INDIVIDUAL PLAYER LEADERBOARD ADDED HERE -->
+    <h2 class="mb-3">Individual Player Leaderboard</h2>
+    <table class="table table-dark table-striped">
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Player Name</th>
+            <th>Team</th>
+            <th>Current Board</th>
+            <th>Score</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for player in top_players %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td class="fw-bold">{{ player.name }}</td>
+            <td class="text-info">{{ player.team.name }}</td>
+            <td>Board {{ player.board_number }}</td>
+            <td class="text-success fw-bold">{{ '%.1f'|format(player.score) }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 </div>
 {% endblock %}
