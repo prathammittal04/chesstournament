@@ -1,91 +1,64 @@
-{% extends "base.html" %}
-
+{% extends "base.html" %} 
 {% block content %}
-
-<h1 class="page-title mb-4">
-    ♟ Chess Tournament Manager
-</h1>
-
+<h1 class="page-title mb-4">Chess Tournament Manager</h1> 
 <div class="card p-4">
-
     <div class="d-flex justify-content-between align-items-center mb-4">
-
         <h3>Existing Tournaments</h3>
-
-        <a href="{{ url_for('tournament.setup') }}"
-           class="btn btn-success">
-
-            ➕ Create New Tournament
-
+        <a href="{{ url_for('tournament.setup') }}" class="btn btn-success">
+            Create New Tournament
         </a>
-
     </div>
-
+    
     {% if tournaments %}
-
         {% for tournament in tournaments %}
-
         <div class="card p-3 mb-3">
-
             <div class="row align-items-center">
-
                 <div class="col-md-8">
-
                     <h4>{{ tournament.name }}</h4>
-
-                    <p class="mb-1">
-                        Status :
-                        {{ tournament.status }}
-                    </p>
-
-                    <p class="mb-0">
-                        Round
-                        {{ tournament.current_round }}
-                        /
-                        {{ tournament.total_rounds }}
-                    </p>
-
+                    <p class="mb-1">Status : {{ tournament.status }}</p>
+                    <p class="mb-0">Round {{ tournament.current_round }} / {{ tournament.total_rounds }}</p>
                 </div>
-
                 <div class="col-md-4 text-end">
-
-                    <a
-                        href="{{ url_for('tournament.tournament_dashboard',
-                        tournament_id=tournament.id) }}"
-                        class="btn btn-primary">
-
+                    <a href="{{ url_for('tournament.tournament_dashboard', tournament_id=tournament.id) }}" class="btn btn-primary">
                         Continue
-
-                    </a>
-                     <a
-        href="{{ url_for('tournament.delete_tournament',
-        tournament_id=tournament.id) }}"
-        class="btn btn-danger">
-
-        Delete
-
-    </a>
-
+                    </a> 
+                    
+                    <!-- Button to trigger the unique Delete Modal -->
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ tournament.id }}">
+                        Delete
+                    </button>
                 </div>
-
             </div>
-
         </div>
 
+        <!-- Delete Confirmation Modal for this specific tournament -->
+        <div class="modal fade" id="deleteModal{{ tournament.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ tournament.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header border-secondary">
+                        <h5 class="modal-title" id="deleteModalLabel{{ tournament.id }}">Confirm Deletion</h5>
+                        <!-- Dark theme close button -->
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-start">
+                        Are you sure you want to permanently delete <strong>{{ tournament.name }}</strong>? All team and match data will be lost. This action cannot be undone.
+                    </div>
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <!-- The actual deletion link is safely tucked away in the confirmation button -->
+                        <a href="{{ url_for('tournament.delete_tournament', tournament_id=tournament.id) }}" class="btn btn-danger">
+                            Yes, Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-
     {% else %}
-
         <div class="text-center py-5">
-
             <h4>No tournaments yet</h4>
-
             <p>Create your first tournament.</p>
-
         </div>
-
     {% endif %}
-
 </div>
-
 {% endblock %}
