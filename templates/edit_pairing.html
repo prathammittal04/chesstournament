@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h1 class="page-title mb-1">Edit Matchmaking</h1>
+        <p class="text-secondary mb-0">{{ tournament.name }} - Round {{ round.round_number }}</p>
+    </div>
+    <a href="{{ url_for('tournament.round_pairings', tournament_id=tournament.id, round_number=round.round_number) }}" class="btn btn-outline-light">
+        Cancel
+    </a>
+</div>
+
+<form method="POST">
+    {% for match in matches %}
+    <div class="card p-4 mb-3 shadow-sm bg-dark border-secondary">
+        <h5 class="text-secondary">Table {{ match.table_number }}</h5>
+        <div class="row align-items-center mt-3">
+            <div class="col-md-5">
+                <select name="match_{{ match.id }}_team1" class="form-select team-select" data-prev="{{ match.team1_id }}">
+                    {% for team in teams %}
+                    <option value="{{ team.id }}" {% if team.id == match.team1_id %}selected{% endif %}>{{ team.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 text-center">
+                <span class="badge bg-secondary fs-6">VS</span>
+            </div>
+            <div class="col-md-5">
+                <select name="match_{{ match.id }}_team2" class="form-select team-select" data-prev="{{ match.team2_id }}">
+                    {% for team in teams %}
+                    <option value="{{ team.id }}" {% if team.id == match.team2_id %}selected{% endif %}>{{ team.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="text-center mt-4 mb-5">
+        <button type="submit" class="btn btn-success btn-lg px-5">Save New Matchmaking</button>
+    </div>
+</form>
+
+<script>
+    // Magic swap logic for the dropdowns
+    document.querySelectorAll('.team-select').forEach(select => {
+        
+        // When the user clicks the dropdown, remember what team was there
+        select.addEventListener('focus', function() {
+            this.setAttribute('data-prev', this.value);
+        });
+
+        // When the user picks a new team
+        select.addEventListener('change', function() {
+            const newValue = this.value;
+            const prevValue = this.getAttribute('data-prev');
+            
+            if (newValue === prevValue) return;
+
+            // Find the other dropdown that currently holds the team we just selected
+            document.querySelectorAll('.team-select').forEach(otherSelect => {
+                if (otherSelect !== this && otherSelect.value === newValue) {
+                    // Force the other dropdown to take the team we replaced
+                    otherSelect.value = prevValue;
+                    otherSelect.setAttribute('data-prev', prevValue);
+                }
+            });
+            
+            // Update this dropdown's memory to the new team
+            this.setAttribute('data-prev', newValue);
+        });
+    });
+</script>
+{% endblock %}
