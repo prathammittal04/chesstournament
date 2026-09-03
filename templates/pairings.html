@@ -5,9 +5,16 @@
         <h1 class="page-title mb-1">{{ tournament.name }}</h1>
         <p class="text-secondary mb-0">Round {{ round_number }} pairings</p>
     </div>
-    <a href="{{ url_for('tournament.dashboard', tournament_id=tournament_id) }}" class="btn btn-outline-light">
-        Leaderboard
-    </a>
+    <div>
+        <a href="{{ url_for('tournament.dashboard', tournament_id=tournament_id) }}" class="btn btn-outline-light">
+            Leaderboard
+        </a>
+        {% if round_number == tournament.current_round %}
+        <a href="{{ url_for('tournament.edit_pairings', tournament_id=tournament_id, round_number=round_number) }}" class="btn btn-warning ms-2">
+            Edit Matchmaking
+        </a>
+        {% endif %}
+    </div>
 </div>
 
 {% for match in matches %}
