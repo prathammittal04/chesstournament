@@ -354,6 +354,43 @@ def round_pairings(tournament_id, round_number):
         all_completed=all_completed,
     )
 
+@tournament.route("/round/<int:tournament_id>/<int:round_number>/edit", methods=["GET", "POST"])
+def edit_pairings(tournament_id, round_number):
+    tournament_data = Tournament.query.get_or_404(tournament_id)
+    round_obj = Round.query.filter_by(
+        tournament_id=tournament_id, 
+        round_number=round_number
+    ).first_or_404()
+    
+    matches = Match.query.filter_by(round_id=round_obj.id).order_by(Match.table_number).all()
+
+    if request.method == "POST":
+        # Update the matches with the new team selections
+        for match in matches:
+            team1_id = request.form.get(f"match_{match.id}_team1")
+            team2_id = request.form.get(f"match_{match.id}_team2")
+            if team1_id and team2_id:
+                match.team1_id = int(team1_id)
+                match.team2_id = int(team2_id)
+        
+        db.session.commit()
+        flash("Matchmaking updated successfully.", "success")
+        return redirect(url_for("tournament.round_pairings", tournament_id=tournament_id, round_number=round_number))
+
+    # Gather all teams currently playing in this round so we can populate the dropdowns
+    teams_in_round = []
+    for match in matches:
+        if match.team1 not in teams_in_round: teams_in_round.append(match.team1)
+        if match.team2 not in teams_in_round: teams_in_round.append(match.team2)
+    
+    return render_template(
+        "edit_pairings.html", 
+        tournament=tournament_data, 
+        round=round_obj, 
+        matches=matches, 
+        teams=teams_in_round
+    )
+
 
 @tournament.route("/match/<int:match_id>", methods=["GET", "POST"])
 def enter_result(match_id):
