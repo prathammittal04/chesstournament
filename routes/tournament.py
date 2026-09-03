@@ -384,7 +384,7 @@ def edit_pairings(tournament_id, round_number):
         if match.team2 not in teams_in_round: teams_in_round.append(match.team2)
     
     return render_template(
-        "edit_pairings.html", 
+        "edit_pairing.html", 
         tournament=tournament_data, 
         round=round_obj, 
         matches=matches, 
